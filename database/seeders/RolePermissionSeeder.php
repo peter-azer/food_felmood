@@ -15,7 +15,7 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        
+
         // Create Roles and Assign Permissions
         $ownerRol = Role::firstOrCreate(['name' => 'owner']);
         $dataEntryRol = Role::firstOrCreate(['name' => 'dataEntry']);
