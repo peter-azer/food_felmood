@@ -13,4 +13,9 @@ class FoodType extends Model
     protected $fillable = [
         'type'
     ];
+
+    public function restaurants()
+    {
+        return $this->belongsToMany(Restaurant::class);
+    }
 }

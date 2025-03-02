@@ -15,4 +15,9 @@ class VisitorAction extends Model
         'action_type',
         'ip_address',
     ];
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
 }

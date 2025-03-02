@@ -16,4 +16,9 @@ class WeeklySchedule extends Model
         'closing_time',
         'is_closed',
     ];
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
 }

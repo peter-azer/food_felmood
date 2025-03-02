@@ -14,4 +14,9 @@ class Area extends Model
     'area',
     'governorate'
    ];
+
+   public function restaurants()
+   {
+       return $this->hasMany(RestaurantBranch::class);
+   }
 }

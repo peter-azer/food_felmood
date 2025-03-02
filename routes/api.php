@@ -16,7 +16,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/login', [AuthController::class, 'login']);
 
 //register new user as owner or data entry
-Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum', 'role:admin']);
+Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum', 'role:owner']);
 
 // guest front-end routes
 Route::prefix('guest')->group(function (){

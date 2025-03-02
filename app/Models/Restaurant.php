@@ -29,8 +29,29 @@ class Restaurant extends Model
         'hotline',
     ];
 
-
     protected $casts = [
         'food_type_ids' => 'array', // Automatically convert JSON to array
     ];
+
+    public function branches()
+    {
+        return $this->hasMany(RestaurantBranch::class);
+    }
+
+    public function foodTypes()
+    {
+        return $this->belongsToMany(FoodType::class);
+    }
+
+    public function socialMediaURL(){
+        return $this->hasOne(RestaurantUrl::class);
+    }
+
+    public function visits(){
+        return $this->hasMany(VisitorAction::class);
+    }
+
+    public function weeklySchedule(){
+        return $this->hasMany(WeeklySchedule::class);
+    }
 }
