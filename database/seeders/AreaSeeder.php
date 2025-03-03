@@ -12,6 +12,16 @@ class AreaSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $areas = ['maadi', 'New Cairo', 'nasr city', 'duqqi', '6 october city'];
+        $governorates = ['Cairo', 'Giza'];
+
+        foreach($areas as $area){
+            foreach($governorates as $governorate){
+                \App\Models\Area::factory()->create([
+                    'area' => $area,
+                    'governorate' => $governorate
+                ]);
+            }
+        }
     }
 }

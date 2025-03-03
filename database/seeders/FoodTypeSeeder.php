@@ -12,6 +12,12 @@ class FoodTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $foodTypes = ['fast food', 'sea food', 'grill', 'oriental', 'dessert', 'drinks', 'fried chicken'];
+
+        foreach($foodTypes as $foodType){
+            \App\Models\FoodType::factory()->create([
+                'type' => $foodType
+            ]);
+        }
     }
 }
