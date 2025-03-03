@@ -13,7 +13,8 @@ class BlogController extends Controller
      */
     public function index()
     {
-        //
+        $blogs = blog::all();
+        return response()->json($blogs);
     }
 
     /**
@@ -35,9 +36,14 @@ class BlogController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(blog $blog)
+    public function show($id)
     {
-        //
+        try{
+            $blog = blog::findOrFail($id);
+            return response()->json($blog);
+        }catch(\Exception $error){
+            return response()->json(['message' => $error->getMessage()], $error->getCode());
+        }
     }
 
     /**

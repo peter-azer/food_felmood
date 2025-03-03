@@ -19,7 +19,6 @@ Route::get('/user', function (Request $request) {
         "user" => $user,
         "role" => $user->getRoleNames()
     ]);
-    
 })->middleware(['auth:sanctum', 'role:admin']);
 
 //login routes for owner and data entry
@@ -41,9 +40,11 @@ Route::prefix('guest')->group(function (){
 
     //restaurant routes
     Route::get('/restaurants', [RestaurantController::class, 'index']);
-    Route::get('/restaurants/branches', [RestaurantBranchController::class, 'index']);
     Route::get('/restaurant/{id}', [RestaurantController::class, 'show']);
-    Route::post('/restaurant/search', [RestaurantController::class, 'search']); #show restaurant branches based on area and food type
+    Route::get('/restaurants/branches', [RestaurantBranchController::class, 'index']);
+    Route::get('/restaurants/branches/{id}', [RestaurantBranchController::class, 'show']);
+    #show restaurant branches based on area and food type
+    Route::post('/restaurant/search', [RestaurantController::class, 'search']);
     Route::get('/restaurant/recommended', [RestaurantController::class, 'recommended']);
 
     //blogs routes
@@ -58,9 +59,6 @@ Route::prefix('guest')->group(function (){
 
     //actions routes
     Route::post('/actions', [VisitorActionController::class, 'store']);
-
-    //random restaurant route
-    Route::get('/random-restaurant', [RestaurantController::class, 'random']);
 });
 
 // dashboard routes

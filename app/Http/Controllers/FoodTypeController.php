@@ -13,7 +13,8 @@ class FoodTypeController extends Controller
      */
     public function index()
     {
-        //
+        $foodTypes = FoodType::all();
+        return response()->json($foodTypes);
     }
 
     /**
@@ -35,9 +36,14 @@ class FoodTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FoodType $foodType)
+    public function show($id)
     {
-        //
+        try{
+            $foodType = FoodType::find($id);
+            return response()->json($foodType);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Food Type not found!'], 404);
+        }
     }
 
     /**

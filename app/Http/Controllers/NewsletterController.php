@@ -29,7 +29,16 @@ class NewsletterController extends Controller
      */
     public function store(StoreNewsletterRequest $request)
     {
-        //
+        try{
+            $validatedData = $request->validate([
+                'email' => 'required|email',
+            ]);
+
+            $newsletter = Newsletter::create($validatedData);
+            return response()->json(['message'=>'Thank you for subscribing'], 201); 
+        }catch(\Exception $e){
+            return response()->json(['message'=>'Something went wrong'], $e->getCode());
+        }
     }
 
     /**

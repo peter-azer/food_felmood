@@ -13,7 +13,8 @@ class AreaController extends Controller
      */
     public function index()
     {
-        //
+        $area = Area::all();
+        return response()->json($area);
     }
 
     /**
@@ -35,9 +36,10 @@ class AreaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Area $area)
+    public function show($id)
     {
-        //
+        $area = Area::find($id);
+        return response()->json($area);
     }
 
     /**

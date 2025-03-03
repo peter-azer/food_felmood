@@ -9,4 +9,8 @@ class Newsletter extends Model
 {
     /** @use HasFactory<\Database\Factories\NewsletterFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'email',
+    ];
 }

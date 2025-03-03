@@ -13,7 +13,12 @@ class RestaurantBranchController extends Controller
      */
     public function index()
     {
-        //
+        $restaurantBranches = RestaurantBranch::selectRaw('restaurant_id, COUNT(*) as branch_count')
+        ->groupBy('restaurant_id')
+        ->with('restaurant')
+        ->get();
+
+        return response()->json($restaurantBranches);
     }
 
     /**
@@ -35,9 +40,14 @@ class RestaurantBranchController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(RestaurantBranch $restaurantBranch)
+    public function show($id)
     {
-        //
+        try{
+            $branch = RestaurantBranch::findOrFail($id);
+            return response()->json($branch);
+        }catch(\Exception $error){
+            return response()->json(['message' => $error->getMessage()], 500);
+        }
     }
 
     /**

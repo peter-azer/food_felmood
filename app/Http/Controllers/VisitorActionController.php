@@ -29,7 +29,19 @@ class VisitorActionController extends Controller
      */
     public function store(StoreVisitorActionRequest $request)
     {
-        //
+        try{
+            $validatedDate = $request->validate([
+                'restaurant_id' => 'required|exists:restaurants,id',
+                'action_type' => 'required|string', //view, click
+                'ip_address' => 'required|string',
+            ]);
+            $visitorAction = VisitorAction::create($validatedDate);
+            return response()->json($visitorAction, 201);
+        }catch(\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

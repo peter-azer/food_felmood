@@ -29,7 +29,19 @@ class ContactUsController extends Controller
      */
     public function store(StoreContactUsRequest $request)
     {
-        //
+        try{
+            $validatedData = $request->validate([
+                'full_name' => 'required|string',
+                'email' => 'required|email',
+                'phone' => 'required|string',
+                'subject' => 'required|string',
+                'message' => 'required|string',
+            ]);
+            $contactUs = ContactUs::create($validatedData);   
+            return response()->json(['message'=>'Thank you for Reaching Us'], 201);
+        }catch(\Exception $e){
+            return response()->json(['message'=>'Something went wrong'], 500);
+        }
     }
 
     /**
