@@ -28,21 +28,21 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum', 'role:owner']);
 
 // guest front-end routes
-Route::prefix('guest')->group(function (){
+Route::prefix('guest')->group(function () {
 
     //food types routes
-    Route::get('/food-types', [FoodTypeController::class, 'index']);
-    Route::get('/food-types/{id}', [FoodTypeController::class, 'show']);
+    Route::get('/food-types', [FoodTypeController::class, 'index']); #DONE
+    Route::get('/food-types/{id}', [FoodTypeController::class, 'show']); #DONE
 
     //area routes
-    Route::get('/areas', [AreaController::class, 'index']);
-    Route::get('/area/{id}', [AreaController::class, 'show']);
+    Route::get('/areas', [AreaController::class, 'index']); #DONE
+    Route::get('/area/{id}', [AreaController::class, 'show']); #DONE
 
     //restaurant routes
-    Route::get('/restaurants', [RestaurantController::class, 'index']);
-    Route::get('/restaurant/{id}', [RestaurantController::class, 'show']);
-    Route::get('/restaurants/branches', [RestaurantBranchController::class, 'index']);
-    Route::get('/restaurants/branches/{id}', [RestaurantBranchController::class, 'show']);
+    Route::get('/restaurants', [RestaurantController::class, 'index']); #DONE
+    Route::get('/restaurant/{id}', [RestaurantController::class, 'show']); #DONE
+    Route::get('/restaurants/branches', [RestaurantBranchController::class, 'index']); #DONE
+    Route::get('/restaurants/branches/{id}', [RestaurantBranchController::class, 'show']); #DONE
     #show restaurant branches based on area and food type
     Route::post('/restaurant/search', [RestaurantController::class, 'search']);
     Route::get('/restaurant/recommended', [RestaurantController::class, 'recommended']);
@@ -62,7 +62,7 @@ Route::prefix('guest')->group(function (){
 });
 
 // dashboard routes
-Route::middleware(['auth:sanctum', 'role:owner', 'role:data entry'])->prefix('owner')->group(function (){
+Route::middleware(['auth:sanctum', 'role:owner', 'role:data entry'])->prefix('owner')->group(function () {
 
     //food types routes
     Route::get('/food-types', [FoodTypeController::class, 'index']);

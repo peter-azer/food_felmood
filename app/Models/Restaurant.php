@@ -40,18 +40,21 @@ class Restaurant extends Model
 
     public function foodTypes()
     {
-        return $this->belongsToMany(FoodType::class);
+        return $this->belongsToMany(FoodType::class, 'food_type_restaurant');
     }
 
-    public function socialMediaURL(){
+    public function socialMediaURL()
+    {
         return $this->hasOne(RestaurantUrl::class);
     }
 
-    public function visits(){
+    public function visits()
+    {
         return $this->hasMany(VisitorAction::class);
     }
 
-    public function weeklySchedule(){
+    public function weeklySchedule()
+    {
         return $this->hasMany(WeeklySchedule::class);
     }
 }

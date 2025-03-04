@@ -15,8 +15,8 @@ class RestaurantController extends Controller
     public function index()
     {
         $restaurants = Restaurant::query()
-        ->with('foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule')
-        ->get();
+            ->with('foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule')
+            ->get();
 
         return response()->json($restaurants);
     }
@@ -26,17 +26,31 @@ class RestaurantController extends Controller
      */
     public function search(Request $request)
     {
-        try{
+        try {
             $restaurants = Restaurant::query()
-            ->where('area_id', $request->area_id)
-            ->where('food_type_ids', 'LIKE', '%'.$request->food_type_id.'%')
-            ->with('branches', 'foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule')
-            ->get();
-            
+                ->where('area_id', $request->area_id)
+                ->where('food_type_ids', 'LIKE', '%' . $request->food_type_id . '%')
+                ->with('branches', 'foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule')
+                ->get();
+
             return response()->json($restaurants);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], $e->getCode());
         }
+    }
+    public function recommended()
+    {
+        try{
+            $restaurant = Restaurant::query()
+            ->where('Rank', '>=', 4)
+            ->where('recommendation', '>=', 4)
+            ->with('foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule', 'branches')
+            ->orderBy('Rank', 'desc')
+            ->get();
+            return response()->json($restaurant);
+        }catch(\Exception $e){
+            return response()->json(['message' => $e->getMessage()], 500);
+        }   
     }
 
     /**
@@ -50,30 +64,19 @@ class RestaurantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Restaurant $restaurant)
+    public function show($id)
     {
-        try{
-            $restaurant->load('foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule', 'branches');
+        try {
+            $restaurant = Restaurant::query()
+                ->where('id', $id)
+                ->with('foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule', 'branches')
+                ->get();
             return response()->json($restaurant);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
-    /**
-     * get all the top ranked and recommended restaurants.
-     */
-    public function recommended()
-    {
-        $recommendedRestaurants = Restaurant::query()
-        ->where('Rank', '>', 4)
-        ->where('recommendation', '>', 4)
-        ->with('foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule', 'branches')
-        ->orderBy('Rank', 'desc')
-        ->get();
-
-        return response()->json($recommendedRestaurants);
-    }
 
     /**
      * Update the specified resource in storage.
