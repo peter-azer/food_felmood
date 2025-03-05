@@ -13,15 +13,8 @@ class VisitorActionController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $visitorActions = VisitorAction::all();
+        return response()->json($visitorActions);
     }
 
     /**
@@ -29,15 +22,15 @@ class VisitorActionController extends Controller
      */
     public function store(StoreVisitorActionRequest $request)
     {
-        try{
+        try {
             $validatedDate = $request->validate([
                 'restaurant_id' => 'required|exists:restaurants,id',
                 'action_type' => 'required|string', //view, click
                 'ip_address' => 'required|string',
             ]);
             $visitorAction = VisitorAction::create($validatedDate);
-            return response()->json($visitorAction, 201);
-        }catch(\Exception $e){
+            return response()->json(201);
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage()
             ], 500);
@@ -47,32 +40,27 @@ class VisitorActionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(VisitorAction $visitorAction)
+    public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(VisitorAction $visitorAction)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateVisitorActionRequest $request, VisitorAction $visitorAction)
-    {
-        //
+        try {
+            $visitorAction = VisitorAction::findOrFail($id);
+            return response()->json($visitorAction);
+        } catch (\Exception $error) {
+            return response()->json(['message' => $error->getMessage()], $error->getCode());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(VisitorAction $visitorAction)
+    public function destroy($id)
     {
-        //
+        try{
+            $visitorAction = VisitorAction::findOrFail($id);
+            $visitorAction->delete();
+            return response()->json(200);
+        }catch(\Exception $error){
+            return response()->json(['message' => $error->getMessage()], 500);
+        }
     }
 }

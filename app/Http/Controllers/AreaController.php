@@ -38,7 +38,7 @@ class AreaController extends Controller
      */
     public function show($id)
     {
-        $area = Area::find($id);
+        $area = Area::findOrFail($id);
         return response()->json($area);
     }
 
@@ -61,8 +61,14 @@ class AreaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Area $area)
+    public function destroy($id)
     {
-        //
+        try{
+            $area = Area::find($id);
+            $area->delete();
+            return response()->json(['message' => 'Area deleted successfully!']);
+        }catch(\Exception $error){
+            return response()->json(['message' => $error->getMessage()], 404);
+        }
     }
 }

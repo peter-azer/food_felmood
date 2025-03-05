@@ -13,15 +13,8 @@ class NewsletterController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $newsletters = Newsletter::all();
+        return response()->json($newsletters);
     }
 
     /**
@@ -44,9 +37,8 @@ class NewsletterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Newsletter $newsletter)
+    public function show($id)
     {
-        //
     }
 
     /**
@@ -68,8 +60,14 @@ class NewsletterController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Newsletter $newsletter)
+    public function destroy($id)
     {
-        //
+        try{
+            $newsletter = Newsletter::findOrFail($id);
+            $newsletter->delete();
+            return response()->json(['message'=>'Newsletter deleted successfully'], 200);
+        }catch(\Exception $e){
+            return response()->json(['message'=> $e->getMessage()], $e->getCode());
+        }
     }
 }

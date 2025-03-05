@@ -13,7 +13,8 @@ class ContactUsController extends Controller
      */
     public function index()
     {
-        //
+        $forms = ContactUs::all();
+        return response()->json($forms);
     }
 
     /**
@@ -47,9 +48,14 @@ class ContactUsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ContactUs $contactUs)
+    public function show($id)
     {
-        //
+        try{
+            $form = ContactUs::find($id);
+            return response()->json($form);
+        }catch(\Exception $e){
+            return response()->json(['message'=>'Something went wrong'], 500);
+        }
     }
 
     /**
@@ -71,8 +77,14 @@ class ContactUsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ContactUs $contactUs)
+    public function destroy($id)
     {
-        //
+        try{
+            $form = ContactUs::find($id);
+            $form->delete();
+            return response()->json(['message'=>'Form Deleted Successfully'], 200);
+        }catch(\Exception $e){
+            return response()->json(['message'=> $e->getMessage()], 500);
+        }
     }
 }

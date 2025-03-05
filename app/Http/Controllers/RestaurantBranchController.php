@@ -69,8 +69,14 @@ class RestaurantBranchController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RestaurantBranch $restaurantBranch)
+    public function destroy($id)
     {
-        //
+        try{
+            $branch = RestaurantBranch::find($id);
+            $branch->delete();
+            return response()->json(['message' => 'Branch deleted successfully!']);
+        }catch(\Exception $error){
+            return response()->json(['message' => $error->getMessage()], 404);
+        }
     }
 }

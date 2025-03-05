@@ -38,10 +38,10 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        try{
+        try {
             $blog = blog::findOrFail($id);
             return response()->json($blog);
-        }catch(\Exception $error){
+        } catch (\Exception $error) {
             return response()->json(['message' => $error->getMessage()], $error->getCode());
         }
     }
@@ -65,8 +65,14 @@ class BlogController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(blog $blog)
+    public function destroy($id)
     {
-        //
+        try{
+            $blog = blog::findOrFail($id);
+            $blog->delete();
+            return response()->json(['message' => 'blog deleted successfully']);
+        }catch(\Exception $error){
+            return response()->json(['message' => $error->getMessage()], $error->getCode());
+        }
     }
 }

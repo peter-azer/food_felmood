@@ -65,8 +65,14 @@ class FoodTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FoodType $foodType)
+    public function destroy($id)
     {
-        //
+        try{
+            $type = FoodType::find($id);
+            $type->delete();
+            return response()->json(['message' => 'Food Type deleted successfully!']);        
+        }catch(\Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 }

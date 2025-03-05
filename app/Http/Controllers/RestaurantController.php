@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Restaurant;
 use App\Http\Requests\StoreRestaurantRequest;
 use App\Http\Requests\UpdateRestaurantRequest;
+use App\Models\RestaurantBranch;
 use Illuminate\Http\Request;
 
 class RestaurantController extends Controller
@@ -15,7 +16,7 @@ class RestaurantController extends Controller
     public function index()
     {
         $restaurants = Restaurant::query()
-            ->with('foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule')
+            ->with('branches','foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule')
             ->get();
 
         return response()->json($restaurants);
@@ -27,9 +28,12 @@ class RestaurantController extends Controller
     public function search(Request $request)
     {
         try {
-            $restaurants = Restaurant::query()
+            $branches = RestaurantBranch::query()
                 ->where('area_id', $request->area_id)
-                ->where('food_type_ids', 'LIKE', '%' . $request->food_type_id . '%')
+                ->get();
+            $restaurants = Restaurant::query()
+                ->whereIn('id', $branches->pluck('restaurant_id'))
+                ->where('food_type_ids', $request->food_type_ids)
                 ->with('branches', 'foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule')
                 ->get();
 
@@ -40,17 +44,17 @@ class RestaurantController extends Controller
     }
     public function recommended()
     {
-        try{
+        try {
             $restaurant = Restaurant::query()
-            ->where('Rank', '>=', 4)
-            ->where('recommendation', '>=', 4)
-            ->with('foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule', 'branches')
-            ->orderBy('Rank', 'desc')
-            ->get();
+                ->where('Rank', '>=', 4)
+                ->where('recommendation', '>=', 4)
+                ->with('foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule', 'branches')
+                ->orderBy('Rank', 'desc')
+                ->get();
             return response()->json($restaurant);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
-        }   
+        }
     }
 
     /**
@@ -89,8 +93,14 @@ class RestaurantController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Restaurant $restaurant)
+    public function destroy($id)
     {
-        //
+        try {
+            $restaurant = Restaurant::findOrFail($id);
+            $restaurant->delete();
+            return response()->json(['message' => 'Restaurant deleted successfully!']);
+        } catch (\Exception $error) {
+            return response()->json(['message' => $error->getMessage()], 404);
+        }
     }
 }
