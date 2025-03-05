@@ -30,7 +30,7 @@ class FoodTypeController extends Controller
      */
     public function store(StoreFoodTypeRequest $request)
     {
-        //
+        
     }
 
     /**
