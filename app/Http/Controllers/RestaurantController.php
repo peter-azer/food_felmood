@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Restaurant;
+use App\Models\RestaurantBranch;
 use App\Http\Requests\StoreRestaurantRequest;
 use App\Http\Requests\UpdateRestaurantRequest;
-use App\Models\RestaurantBranch;
+use App\Services\CodeGenerator;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Http\Request;
 
 class RestaurantController extends Controller
@@ -16,7 +19,7 @@ class RestaurantController extends Controller
     public function index()
     {
         $restaurants = Restaurant::query()
-            ->with('branches','foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule')
+            ->with('branches', 'foodTypes', 'socialMediaURL', 'visits', 'weeklySchedule')
             ->get();
 
         return response()->json($restaurants);
@@ -60,33 +63,56 @@ class RestaurantController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRestaurantRequest $request)
+    public function store(Request $request)
     {
-        try{
-                $validatedData = $request->validated();
-                //Handle image and logo upload
-                $logo = $request->file('logo')->getClientOriginalName();
-                $request->file('logo')->storeAs('public/logos', $logo);
-
-                $thumbnail = $request->file('thumbnail')->getClientOriginalName();
-                $request->file('thumbnail')->storeAs('public/thumbnails', $thumbnail);
-
-                $imgs = [];
-                if($request->hasFile('images')){
-                    $images = $request->file('images');
-                    foreach($images as $image){
-                        $image->storeAs('public/images', $image->getClientOriginalName());
-                        $imgs [] = $image->getClientOriginalName();
-                    }
-                    $validatedData['images'] = $imgs;
-                }
-            
-                $restaurant = Restaurant::create($validatedData);
-            
-                return response()->json(['message' => 'Product Created Successfully']);
-            } catch (\Exception $e) {
-                return response()->json(['error' => $e->getMessage()], 500);
+        try {
+            //generate a unique restaurant code
+            $restaurantCode = CodeGenerator::generateCode();
+            $validatedData = $request->validate([
+                'food_type_ids' => 'required|array',
+                'food_type_ids.*' => 'required|integer|exists:food_types,id',
+                'name' => 'required|string',
+                'name_ar' => 'required|string',
+                'logo' => 'required|image',
+                'thumbnail' => 'required|image',
+                'description' => 'required|string',
+                'description_ar' => 'required|string',
+                'slug' => 'required|string',
+                'slug_ar' => 'required|string',
+                'Rank' => 'required|integer|min:0',
+                'recommendation' => 'required|integer|min:0',
+                'cost' => 'required|string',
+                'restaurant_code' => 'required|string',
+                'images' => 'required|array',
+                'images.*' => 'required|image',
+                'hotline' => 'required|string',
+            ]);
+            //Handle image and logo upload
+            if ($request->hasFile('logo')) {
+                $logoPath = $request->file('logo')->store('logos', 'public');
+                $validatedData['logo'] = URL::to(Storage::url($logoPath));
             }
+            if ($request->hasFile('thumbnail')) {
+                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+                $validatedData['thumbnail'] = URL::to(Storage::url($thumbnailPath));
+            }
+
+            $imgs = [];
+            if ($request->hasFile('images')) {
+                $images = $request->file('images');
+                foreach ($images as $image) {
+                    $imagePath = $image->store('images', 'public');
+                    $imgs[] = URL::to(Storage::url($imagePath));
+                }
+                $validatedData['images'] = json_encode($imgs);
+            }
+            $validatedData['restaurant_code'] = $restaurantCode;
+            $restaurant = Restaurant::create($validatedData);
+
+            return response()->json(["message" => "Restaurant created successfully!"], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -127,13 +153,13 @@ class RestaurantController extends Controller
                 $request->file('thumbnail')->storeAs('public/thumbnails', $thumbnail);
                 $validatedData['thumbnail'] = $thumbnail;
             }
-            
+
             $imgs = [];
             if ($request->hasFile('images')) {
                 $images = $request->file('images');
                 foreach ($images as $image) {
                     $image->storeAs('public/images', $image->getClientOriginalName());
-                    $imgs [] = $image->getClientOriginalName();
+                    $imgs[] = $image->getClientOriginalName();
                 }
                 $validatedData['images'] = $imgs;
             }

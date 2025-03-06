@@ -76,7 +76,7 @@ Route::middleware(['auth:sanctum', 'role:owner|data entry'])->prefix('dashboard'
     Route::delete('/area/{id}', [AreaController::class, 'destroy']); #DONE
 
     //restaurant routes
-    Route::post('/restaurant', [RestaurantController::class, 'store']);
+    Route::post('/restaurant-new', [RestaurantController::class, 'store']);
     Route::put('/restaurant/{id}', [RestaurantController::class, 'update']);
     Route::delete('/restaurant/{id}', [RestaurantController::class, 'destroy']);
 
