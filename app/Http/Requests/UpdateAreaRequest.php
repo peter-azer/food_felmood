@@ -22,7 +22,8 @@ class UpdateAreaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "area" =>["required", "string", "max:255"],
+            "governorate" =>["required", "string", "max:255"]
         ];
     }
 }

@@ -18,19 +18,23 @@ class BlogController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreblogRequest $request)
     {
-        //
+        try{
+            $validatedData = $request->validated();
+
+            if($request->hasFile('cover')){
+                $cover = $request->file('cover')->getClientOriginalName();
+                $request->file('cover')->storeAs('public/covers', $cover);
+                $validatedData['cover'] = $cover;   
+            }
+            $blog = blog::create($validatedData);
+            return response()->json(['message' => 'blog created successfully']);
+        }catch(\Exception $error){
+            return response()->json(['message' => $error->getMessage()], $error->getCode());
+        }
     }
 
     /**
@@ -47,19 +51,23 @@ class BlogController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(blog $blog)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateblogRequest $request, blog $blog)
+    public function update(UpdateblogRequest $request, $id)
     {
-        //
+        try{
+            $validatedData = $request->validated();
+            $blog = blog::findOrFail($id);
+            if($request->hasFile('cover')){
+                $cover = $request->file('cover')->getClientOriginalName();
+                $request->file('cover')->storeAs('public/covers', $cover);
+                $validatedData['cover'] = $cover;   
+            }
+            $blog = blog::create($validatedData);
+            return response()->json(['message' => 'blog created successfully']);
+        }catch(\Exception $error){
+            return response()->json(['message' => $error->getMessage()], $error->getCode());
+        }
     }
 
     /**

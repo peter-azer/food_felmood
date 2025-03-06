@@ -18,19 +18,17 @@ class AreaController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreAreaRequest $request)
     {
-        //
+        try{
+            $validatedData = $request->validated();
+            $area = Area::create($validatedData);
+            return response()->json(['message' => 'Area created successfully!']);
+        }catch(\Exception $error){
+            return response()->json(['message' => $error->getMessage()], 404);
+        }
     }
 
     /**
@@ -43,19 +41,18 @@ class AreaController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Area $area)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAreaRequest $request, Area $area)
+    public function update(UpdateAreaRequest $request, $id)
     {
-        //
+        try{
+            $validatedData = $request->validated();
+            $area = Area::findOrFail($id);
+            $area->update($validatedData);
+            return response()->json(['message' => 'Area updated successfully!']);
+        }catch(\Exception $error){
+            return response()->json(['message' => $error->getMessage()], $error->getCode());
+        }
     }
 
     /**

@@ -22,7 +22,9 @@ class StoreblogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "title" => ["required", "string", "max:255"],
+            "content" => ["required", "string"],
+            "cover" => ["required", "image", "mimes:jpeg,png,jpg,gif,svg"],
         ];
     }
 }

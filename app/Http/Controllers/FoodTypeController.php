@@ -18,19 +18,17 @@ class FoodTypeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreFoodTypeRequest $request)
     {
-        
+        try{
+            $validated = $request->validated();
+            $foodType = FoodType::create($validated);
+            return response()->json(['message' => 'Food Type created successfully!']); 
+        }catch(\Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 
     /**
@@ -47,19 +45,18 @@ class FoodTypeController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(FoodType $foodType)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFoodTypeRequest $request, FoodType $foodType)
+    public function update(UpdateFoodTypeRequest $request, $id)
     {
-        //
+        try{
+            $validated = $request->validated();
+            $type = FoodType::findOrFail($id);
+            $type->update($validated);
+            return response()->json(['message' => 'Food Type updated successfully!']);
+        }catch(\Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 
     /**

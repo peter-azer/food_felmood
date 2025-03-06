@@ -22,7 +22,14 @@ class StoreRestaurantBranchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'restaurant_id' => ['required', 'integer', 'exists:restaurants,id'],
+            'area_id' => ['required', 'integer', 'exists:areas,id'],
+            'branch_code' => ['required', 'string', 'max:255'],
+            'phone_number' => ['required', 'string', 'max:255'],
+            'optional_phone_number' => ['nullable', 'string', 'max:255'],
+            'location' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:255'],
+            'menu' => ['required', 'string', 'max:255'],
         ];
     }
 }

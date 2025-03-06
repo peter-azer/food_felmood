@@ -62,7 +62,31 @@ class RestaurantController extends Controller
      */
     public function store(StoreRestaurantRequest $request)
     {
-        //
+        try{
+                $validatedData = $request->validated();
+                //Handle image and logo upload
+                $logo = $request->file('logo')->getClientOriginalName();
+                $request->file('logo')->storeAs('public/logos', $logo);
+
+                $thumbnail = $request->file('thumbnail')->getClientOriginalName();
+                $request->file('thumbnail')->storeAs('public/thumbnails', $thumbnail);
+
+                $imgs = [];
+                if($request->hasFile('images')){
+                    $images = $request->file('images');
+                    foreach($images as $image){
+                        $image->storeAs('public/images', $image->getClientOriginalName());
+                        $imgs [] = $image->getClientOriginalName();
+                    }
+                    $validatedData['images'] = $imgs;
+                }
+            
+                $restaurant = Restaurant::create($validatedData);
+            
+                return response()->json(['message' => 'Product Created Successfully']);
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
     }
 
     /**
@@ -85,9 +109,41 @@ class RestaurantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRestaurantRequest $request, Restaurant $restaurant)
+    public function update(UpdateRestaurantRequest $request, $id)
     {
-        //
+        try {
+            $validatedData = $request->validated();
+            $restaurant = Restaurant::findOrFail($id);
+
+            // Handle image and logo upload
+            if ($request->hasFile('logo')) {
+                $logo = $request->file('logo')->getClientOriginalName();
+                $request->file('logo')->storeAs('public/logos', $logo);
+                $validatedData['logo'] = $logo;
+            }
+
+            if ($request->hasFile('thumbnail')) {
+                $thumbnail = $request->file('thumbnail')->getClientOriginalName();
+                $request->file('thumbnail')->storeAs('public/thumbnails', $thumbnail);
+                $validatedData['thumbnail'] = $thumbnail;
+            }
+            
+            $imgs = [];
+            if ($request->hasFile('images')) {
+                $images = $request->file('images');
+                foreach ($images as $image) {
+                    $image->storeAs('public/images', $image->getClientOriginalName());
+                    $imgs [] = $image->getClientOriginalName();
+                }
+                $validatedData['images'] = $imgs;
+            }
+
+            $restaurant->update($validatedData);
+
+            return response()->json(['message' => 'Restaurant updated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**

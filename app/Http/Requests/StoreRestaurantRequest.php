@@ -22,7 +22,23 @@ class StoreRestaurantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'food_type_ids' => 'required|array',
+            'food_type_ids.*' => 'required|integer|exists:food_types,id',
+            'name' => 'required|string',
+            'name_ar' => 'required|string',
+            'logo' => 'required|image',
+            'thumbnail' => 'required|image',
+            'description' => 'required|string',
+            'description_ar' => 'required|string',
+            'slug' => 'required|string',
+            'slug_ar' => 'required|string',
+            'Rank' => 'required|integer|min:0',
+            'recommendation' => 'required|integer|min:0',
+            'cost' => 'required|string',
+            'restaurant_code' => 'required|string',
+            'images' => 'required|array',
+            'images.*' => 'required|image',
+            'hotline' => 'required|string',
         ];
     }
 }
