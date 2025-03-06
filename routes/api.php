@@ -22,10 +22,11 @@ Route::get('/user', function (Request $request) {
 })->middleware(['auth:sanctum', 'role:admin']);
 
 //login routes for owner and data entry
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']); #DONE
 
 //register new user as owner or data entry
-Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum', 'role:owner']);
+Route::post('/register', [AuthController::class, 'register'])
+    ->middleware(['auth:sanctum', 'role:owner']); #DONE
 
 // guest front-end routes
 Route::prefix('guest')->group(function () {
@@ -62,23 +63,23 @@ Route::prefix('guest')->group(function () {
 });
 
 // dashboard routes
-Route::middleware(['auth:sanctum', 'role:owner', 'role:data entry'])->prefix('owner')->group(function () {
+Route::middleware(['auth:sanctum', 'role:owner|data entry'])->prefix('dashboard')->group(function () {
 
     //food types routes
-    Route::post('/food-type', [FoodTypeController::class, 'store']);
-    Route::put('/food-type/{id}', [FoodTypeController::class, 'update']);
-    Route::delete('/food-type/{id}', [FoodTypeController::class, 'destroy']);
-    
+    Route::post('/food-type', [FoodTypeController::class, 'store']); #DONE
+    Route::put('/food-type/{id}', [FoodTypeController::class, 'update']); #DONE
+    Route::delete('/food-type/{id}', [FoodTypeController::class, 'destroy']); #DONE
+
     //area routes
-    Route::post('/area', [AreaController::class, 'store']);
-    Route::put('/area/{id}', [AreaController::class, 'update']);
-    Route::delete('/area/{id}', [AreaController::class, 'destroy']);
-    
+    Route::post('/area', [AreaController::class, 'store']); #DONE
+    Route::put('/area/{id}', [AreaController::class, 'update']); #DONE
+    Route::delete('/area/{id}', [AreaController::class, 'destroy']); #DONE
+
     //restaurant routes
     Route::post('/restaurant', [RestaurantController::class, 'store']);
     Route::put('/restaurant/{id}', [RestaurantController::class, 'update']);
     Route::delete('/restaurant/{id}', [RestaurantController::class, 'destroy']);
-    
+
     //restaurant branches routes
     Route::post('/restaurant/branch', [RestaurantBranchController::class, 'store']);
     Route::put('/restaurant/branch/{id}', [RestaurantBranchController::class, 'update']);

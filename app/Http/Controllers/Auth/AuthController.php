@@ -30,7 +30,8 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function register(Request $request){
+    public function register(Request $request)
+    {
         try {
 
             $request->validate([
@@ -45,6 +46,7 @@ class AuthController extends Controller
                 'password' => $request->password
             ]);
             $user->assignRole($request->role);
+            return response()->json(['message' => 'User created successfully'], 201);
         } catch (\Exception $error) {
             return response()->json(['message' => $error], 500);
         }
