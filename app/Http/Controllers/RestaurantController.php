@@ -68,6 +68,7 @@ class RestaurantController extends Controller
         try {
             //generate a unique restaurant code
             $restaurantCode = CodeGenerator::generateCode();
+            $request->merge(['restaurant_code' => $restaurantCode]);
             $validatedData = $request->validate([
                 'food_type_ids' => 'required|array',
                 'food_type_ids.*' => 'required|integer|exists:food_types,id',
@@ -87,6 +88,7 @@ class RestaurantController extends Controller
                 'images.*' => 'required|image',
                 'hotline' => 'required|string',
             ]);
+
             //Handle image and logo upload
             if ($request->hasFile('logo')) {
                 $logoPath = $request->file('logo')->store('logos', 'public');
@@ -98,16 +100,18 @@ class RestaurantController extends Controller
             }
 
             $imgs = [];
-            if ($request->hasFile('images')) {
+            if ($request->hasFile('images') && is_array($request->file('images'))) {
                 $images = $request->file('images');
                 foreach ($images as $image) {
                     $imagePath = $image->store('images', 'public');
                     $imgs[] = URL::to(Storage::url($imagePath));
                 }
-                $validatedData['images'] = json_encode($imgs);
+                $validatedData['images'] = implode(',', $imgs);
             }
+
             $validatedData['restaurant_code'] = $restaurantCode;
             $restaurant = Restaurant::create($validatedData);
+            $restaurant->foodTypes()->attach($request->food_type_ids);
 
             return response()->json(["message" => "Restaurant created successfully!"], 201);
         } catch (\Exception $e) {
