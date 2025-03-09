@@ -139,10 +139,28 @@ class RestaurantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRestaurantRequest $request, $id)
+    public function update(Request $request, $id)
     {
         try {
-            $validatedData = $request->validated();
+            $validatedData = $request->validate([
+                'food_type_ids' => 'sometimes|array',
+                'food_type_ids.*' => 'sometimes|integer|exists:food_types,id',
+                'name' => 'sometimes|string',
+                'name_ar' => 'sometimes|string',
+                'logo' => 'sometimes|image',
+                'thumbnail' => 'sometimes|image',
+                'description' => 'sometimes|string',
+                'description_ar' => 'sometimes|string',
+                'slug' => 'sometimes|string',
+                'slug_ar' => 'sometimes|string',
+                'Rank' => 'sometimes|integer|min:0',
+                'recommendation' => 'sometimes|integer|min:0',
+                'cost' => 'sometimes|string',
+                'restaurant_code' => 'sometimes|string',
+                'images' => 'sometimes|array',
+                'images.*' => 'sometimes|image',
+                'hotline' => 'sometimes|string',
+            ]);
             $restaurant = Restaurant::findOrFail($id);
 
             // Handle image and logo upload
@@ -161,14 +179,16 @@ class RestaurantController extends Controller
             $imgs = [];
             if ($request->hasFile('images')) {
                 $images = $request->file('images');
+                $images = $request->file('images');
                 foreach ($images as $image) {
-                    $image->storeAs('public/images', $image->getClientOriginalName());
-                    $imgs[] = $image->getClientOriginalName();
+                    $imagePath = $image->store('images', 'public');
+                    $imgs[] = URL::to(Storage::url($imagePath));
                 }
-                $validatedData['images'] = $imgs;
+                $validatedData['images'] = implode(',', $imgs);
             }
 
             $restaurant->update($validatedData);
+            $restaurant->foodTypes()->attach($request->food_type_ids);
 
             return response()->json(['message' => 'Restaurant updated successfully']);
         } catch (\Exception $e) {
