@@ -165,20 +165,30 @@ class RestaurantController extends Controller
 
             // Handle image and logo upload
             if ($request->hasFile('logo')) {
-                $logo = $request->file('logo')->getClientOriginalName();
-                $request->file('logo')->storeAs('public/logos', $logo);
-                $validatedData['logo'] = $logo;
+                // Delete the old image if it exists
+                if ($restaurant->logo) {
+                    Storage::disk('public')->delete($restaurant->logo);
+                }
+                $logoPath = $request->file('logo')->store('logos', 'public');
+                $validatedData['logo'] = URL::to(Storage::url($logoPath));
             }
 
             if ($request->hasFile('thumbnail')) {
-                $thumbnail = $request->file('thumbnail')->getClientOriginalName();
-                $request->file('thumbnail')->storeAs('public/thumbnails', $thumbnail);
-                $validatedData['thumbnail'] = $thumbnail;
+                // Delete the old image if it exists
+                if ($restaurant->thumbnail) {
+                    Storage::disk('public')->delete($restaurant->thumbnail);
+                }
+                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+                $validatedData['thumbnail'] = URL::to(Storage::url($thumbnailPath));
             }
 
             $imgs = [];
+            $oldImages = explode(',', $restaurant->images);
             if ($request->hasFile('images')) {
-                $images = $request->file('images');
+                // Delete the old images if they exist
+                foreach ($oldImages as $oldImage) {
+                    Storage::dist('public')->delete($oldImage);
+                }
                 $images = $request->file('images');
                 foreach ($images as $image) {
                     $imagePath = $image->store('images', 'public');

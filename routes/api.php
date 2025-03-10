@@ -81,26 +81,26 @@ Route::middleware(['auth:sanctum', 'role:owner|data entry'])->prefix('dashboard'
     Route::delete('/restaurant/{id}', [RestaurantController::class, 'destroy']); #DONE
 
     //restaurant branches routes
-    Route::post('/restaurant/branch', [RestaurantBranchController::class, 'store']);
-    Route::put('/restaurant/branch/{id}', [RestaurantBranchController::class, 'update']);
-    Route::delete('/restaurant/branch/{id}', [RestaurantBranchController::class, 'destroy']);
+    Route::post('/restaurant/branch', [RestaurantBranchController::class, 'store']); #DONE
+    Route::put('/restaurant/branch/{id}', [RestaurantBranchController::class, 'update']); #DONE
+    Route::delete('/restaurant/branch/{id}', [RestaurantBranchController::class, 'destroy']); #DONE
 
     //blogs routes
-    Route::post('/blog', [BlogController::class, 'store']);
-    Route::put('/blog/{id}', [BlogController::class, 'update']);
-    Route::delete('/blog/{id}', [BlogController::class, 'destroy']);
+    Route::post('/blog', [BlogController::class, 'store']); #DONE
+    Route::put('/blog/{id}', [BlogController::class, 'update']); #DONE
+    Route::delete('/blog/{id}', [BlogController::class, 'destroy']); #DONE
 
     //actions routes
-    Route::get('/actions', [VisitorActionController::class, 'index']);
-    Route::get('/action/{id}', [VisitorActionController::class, 'show']);
-    Route::delete('/action/{id}', [VisitorActionController::class, 'destroy']);
+    Route::get('/actions', [VisitorActionController::class, 'index']); #DONE
+    Route::get('/action/{id}', [VisitorActionController::class, 'show']); #DONE
+    Route::delete('/action/{id}', [VisitorActionController::class, 'destroy']); #DONE
 
     //contact us routes
-    Route::get('/contact-us', [ContactUsController::class, 'index']);
-    Route::get('/contact-us/{id}', [ContactUsController::class, 'show']);
-    Route::delete('/contact-us/{id}', [ContactUsController::class, 'destroy']);
+    Route::get('/contact-us', [ContactUsController::class, 'index']); #DONE
+    Route::get('/contact-us/{id}', [ContactUsController::class, 'show']); #DONE
+    Route::delete('/contact-us/{id}', [ContactUsController::class, 'destroy']); #DONE
 
     //newsletter routes
-    Route::get('/newsletters', [NewsletterController::class, 'index']);
-    Route::delete('/newsletter/{id}', [NewsletterController::class, 'destroy']);
+    Route::get('/newsletters', [NewsletterController::class, 'index']); #DONE
+    Route::delete('/newsletter/{id}', [NewsletterController::class, 'destroy']); #DONE
 });

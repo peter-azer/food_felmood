@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\blog;
 use App\Http\Requests\StoreblogRequest;
 use App\Http\Requests\UpdateblogRequest;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -22,17 +24,16 @@ class BlogController extends Controller
      */
     public function store(StoreblogRequest $request)
     {
-        try{
+        try {
             $validatedData = $request->validated();
 
-            if($request->hasFile('cover')){
-                $cover = $request->file('cover')->getClientOriginalName();
-                $request->file('cover')->storeAs('public/covers', $cover);
-                $validatedData['cover'] = $cover;   
+            if ($request->hasFile('cover')) {
+                $coverPath = $request->file('cover')->store('blogs_covers', 'public');
+                $validatedData['cover'] = URL::to(Storage::url($coverPath));
             }
             $blog = blog::create($validatedData);
             return response()->json(['message' => 'blog created successfully']);
-        }catch(\Exception $error){
+        } catch (\Exception $error) {
             return response()->json(['message' => $error->getMessage()], $error->getCode());
         }
     }
@@ -55,17 +56,24 @@ class BlogController extends Controller
      */
     public function update(UpdateblogRequest $request, $id)
     {
-        try{
-            $validatedData = $request->validated();
+        try {
+            $validatedData = $request->validate([
+                "title" => "sometimes|string|max:255",
+                "content" => "sometimes|string",
+                "cover" => "sometimes|image|mimes:jpeg,png,jpg,gif,svg",
+            ]);
             $blog = blog::findOrFail($id);
-            if($request->hasFile('cover')){
-                $cover = $request->file('cover')->getClientOriginalName();
-                $request->file('cover')->storeAs('public/covers', $cover);
-                $validatedData['cover'] = $cover;   
+            $oldCover = $blog->cover;
+            // dd($blog);
+            if ($request->hasFile('cover')) {
+                // Delete the old images if they exist
+                Storage::dist('public')->delete($oldCover);
+                $coverPath = $request->file('cover')->store('blogs_covers', 'public');
+                $validatedData['cover'] = URL::to(Storage::url($coverPath));
             }
-            $blog = blog::create($validatedData);
-            return response()->json(['message' => 'blog created successfully']);
-        }catch(\Exception $error){
+            $blog->update($validatedData);
+            return response()->json(['message' => 'blog updated successfully'], 200);
+        } catch (\Exception $error) {
             return response()->json(['message' => $error->getMessage()], $error->getCode());
         }
     }
@@ -75,11 +83,11 @@ class BlogController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             $blog = blog::findOrFail($id);
             $blog->delete();
             return response()->json(['message' => 'blog deleted successfully']);
-        }catch(\Exception $error){
+        } catch (\Exception $error) {
             return response()->json(['message' => $error->getMessage()], $error->getCode());
         }
     }

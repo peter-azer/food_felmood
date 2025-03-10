@@ -9,7 +9,8 @@ class CodeGenerator
     public static function generateCode()
     {
         $latest = Restaurant::latest('id')->first();
-        $number = $latest ? intval(substr($latest->restaurant_code, 5)) + 1 : 1;
-        return 'RESTO-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+        $restaurantName = strtoupper(substr($latest->name, 0, 3));
+        $uniqueCode = 'RESTO-' . $restaurantName . '-' . strtoupper(substr(uniqid(), -6));
+        return $uniqueCode;
     }
 }

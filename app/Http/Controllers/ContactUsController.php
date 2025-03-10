@@ -51,14 +51,6 @@ class ContactUsController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateContactUsRequest $request, ContactUs $contactUs)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
